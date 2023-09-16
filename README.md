@@ -3,7 +3,7 @@ Scrape from TheCrag to generate PDFs from lists and areas with up-to-date warnin
 
 ## Feature Ideas
 
-- get route description and area description
+- complex route description and area description
 - improve photo topo quality
 - Get approach for level up
 - reverse proxy caching?

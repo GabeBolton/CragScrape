@@ -17,9 +17,15 @@ class CragList():
         self.log.debug('Log initialized')
 
         self.url = url
+
+        self.name = ''
         
         self.routes = []
         self.get_routes(driver)
+
+    def get_name(self, driver):
+        driver.get(self.url)
+        self.name = driver.find_element(By.CLASS_NAME , 'list-container').get_attribute('data-list-name')
 
     def get_routes(self, driver):
         driver.get(self.url)
@@ -29,7 +35,7 @@ class CragList():
         route_url_list = []
         for r in route_el_list:
             this_href = re.findall('(?:<a href=")([^"]*)', r.get_attribute('innerHTML'))
-            assert len(this_href) == 1
+            assert len(this_href) == 1 # Probably need to move the mouse so no routes are highlighted
             route_url_list.append('https://www.thecrag.com'+this_href[0])
             self.route_comments = r.find_element(By.CLASS_NAME , 'markdown.desc.item-comment').get_attribute('data-comment')
 

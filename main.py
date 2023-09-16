@@ -6,6 +6,7 @@ from crag_sesh import create_authenticated_session
 from crag_node import *
 from crag_list import CragList
 import pdf_formatting
+from gpx_export import gpx_export
 
 
 # Get module-level logger
@@ -26,6 +27,7 @@ def main(url):
         cl = CragList(url, driver)
     
     print(pdf_formatting.get_route_list_df(cl.routes))
+    gpx_export([cl])
 
 
 main("https://www.thecrag.com/en/list/8144130849")

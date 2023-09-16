@@ -78,13 +78,14 @@ class CragNode():
 
 class CragRoute(CragNode):
     def __init__(self, url, driver) -> None:
+
         super().__init__(url, driver)
+        self.route_info = {}
         self.get_route_info(driver)
 
     def get_route_info(self, driver):
         driver.get(self.url)
         # driver.find_elements(By.CLASS_NAME , 'heading__t')
-        self.route_info = {}
         headline = driver.find_element(By.CLASS_NAME , 'headline')
         self.route_info['Name'] = re.findall('(?:<span itemprop="name">)(.*)(?=</span>)', headline.get_attribute('innerHTML'))
 
@@ -97,6 +98,10 @@ class CragRoute(CragNode):
         self.route_info['Pitches'] = re.findall('(?:<li><strong>Pitches:</strong> )(.*)(?=<i class="icon-pitches"></i>)', headline_guts.get_attribute('innerHTML'))
         self.route_info['Bolts'] = re.findall('(?:<li><strong>Bolts:</strong> )(.*)(?=</li>)', headline_guts.get_attribute('innerHTML'))
         self.route_info['Ascents'] = re.findall('(?:<li><strong>Ascents:</strong> .*?>)(.*)(?=</a>)', headline_guts.get_attribute('innerHTML'))
+
+        markdown = driver.find_element(By.CLASS_NAME , f'description.node-beta').find_element(By.CLASS_NAME, 'markdown')
+        self.route_info['Description'] = markdown.text
+
 
         # Parse everything that should be just a string
         for key, value in self.route_info.items():
