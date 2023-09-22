@@ -5,6 +5,7 @@ from selenium import webdriver
 from crag_sesh import create_authenticated_session
 from crag_node import *
 from crag_list import CragList
+from crag_scrape import CragScrape
 import pdf_formatting
 from gpx_export import gpx_export
 
@@ -19,18 +20,23 @@ _log.debug('Log initialized')
 def main(url):
     # URL of the area/list
 
-    # Open the TheCrag.com website in a web browser
-    driver = create_authenticated_session()
+    # Open the TheCrag.com website in a web 
+    # CragScrape.load('./default-scrape/scrape.json')
+    scrape = CragScrape()
+    scrape.scrape([url])
+    # driver = create_authenticated_session()
 
-    # r = CragRoute('https://www.thecrag.com/en/climbing/chile/route/1203163971', driver)
-    if 'list' in url:
-        cl = CragList(url, driver)
+    # # r = CragRoute('https://www.thecrag.com/en/climbing/chile/route/1203163971', driver)
+    # if 'list' in url:
+    #     cl = CragList(url, driver)
     
-    print(pdf_formatting.get_route_list_df(cl.routes))
-    gpx_export([cl])
+    
+    print(pdf_formatting.get_route_list_df(scrape.get_routes()))
+    gpx_export([scrape.get_routes()])
 
 
-main("https://www.thecrag.com/en/list/8144130849")
+# main("https://www.thecrag.com/en/list/8144130849")
+main("https://www.thecrag.com/en/list/8060745972")
 
 """
 <div class="area" data-nid="323218395">

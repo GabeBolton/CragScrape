@@ -5,22 +5,31 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 import re
 import ast
+import datetime
 
 # Get module-level logger
 _log = logging.getLogger(__name__)
 _log.debug('Log initialized')
 
 class CragNode():
-    def __init__(self, url, driver) -> None:
+    def __init__(self, url=None, driver=None) -> None:
         self.log = logging.getLogger(self.__class__.__name__)
         self.log.debug('Log initialized')
+        self._unsaved_keys = ['log']
 
         self.url = url
 
         self.node_info_list = ['description', 'access-issues', 'approach']        
         self.node_info = {}
+        
+        self.last_update = datetime.datetime(2000,1,1)
+        if self.url is not None and driver is not None:
+            self.update(driver)
+
+    def update(self, driver):
         self.get_node_info(driver)
         self.get_location(driver)
+        self.last_update = datetime.datetime.now()
     
     def get_node_info(self, driver):
         driver.get(self.url)
@@ -40,20 +49,10 @@ class CragNode():
             float(driver.find_element(By.XPATH, "//meta[@property='place:location:longitude']").get_attribute('content'))
         ]
 
-    # def get_area_poly(self, driver):
-    #     try:
-    #         # This is actually the bounding box for the map, not the area polygon
-    #         map_script = driver.find_element(By.XPATH , f'/html/body/div[1]/div[3]/div[3]/div/div[3]/div/div[1]/script[6]')
-    #         bound_string = re.findall('bbox: (.*),', map_script.get_attribute('innerHTML'))
-    #         self.bounds = 
-    #     except NoSuchElementException:
-    #         self.bounds = None
+    def get_photo_topos(self, driver, phototopo_folder=None):
+        if phototopo_folder is None:
+            phototopo_folder = './phototopos'
 
-    def get_sub_areas(self, driver):
-        driver.get(self.url)
-        area_el_list = driver.find_elements(By.CLASS_NAME , 'area')
-
-    def get_photo_topos(self, driver):
         driver.get(self.url)
         self.photo_topos =[]
 
@@ -63,7 +62,7 @@ class CragNode():
             tid = pt.get_attribute('data-tid')
             # self.photo_topos.append(tid)
 
-            pt.screenshot(f'./phototopos/{tid}.png')
+            pt.screenshot(f'{phototopo_folder}/{tid}.png')
 
 
     # def get_parent_areas(self, driver):
@@ -77,10 +76,12 @@ class CragNode():
     #         self.parents
 
 class CragRoute(CragNode):
-    def __init__(self, url, driver) -> None:
-
-        super().__init__(url, driver)
+    def __init__(self, url=None, driver=None) -> None:
         self.route_info = {}
+        super().__init__(url, driver)
+        
+    def update(self, driver):
+        super().update(driver)
         self.get_route_info(driver)
 
     def get_route_info(self, driver):
@@ -114,5 +115,18 @@ class CragRoute(CragNode):
             if value == []:
                 self.route_info[key] = ''
         # self.route_info['Lists'] = 
-        
-        
+
+class CragArea(CragNode):
+    
+    def get_sub_areas(self, driver):
+        driver.get(self.url)
+        area_el_list = driver.find_elements(By.CLASS_NAME , 'area')
+    
+    # def get_area_poly(self, driver):
+    #     try:
+    #         # This is actually the bounding box for the map, not the area polygon
+    #         map_script = driver.find_element(By.XPATH , f'/html/body/div[1]/div[3]/div[3]/div/div[3]/div/div[1]/script[6]')
+    #         bound_string = re.findall('bbox: (.*),', map_script.get_attribute('innerHTML'))
+    #         self.bounds = 
+    #     except NoSuchElementException:
+    #         self.bounds = None
