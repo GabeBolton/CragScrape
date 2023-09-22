@@ -21,6 +21,7 @@ class CragNode():
 
         self.node_info_list = ['description', 'access-issues', 'approach']        
         self.node_info = {}
+        self.tags = {}
         
         self.last_update = datetime.datetime(2000,1,1)
         if self.url is not None and driver is not None:
@@ -29,6 +30,7 @@ class CragNode():
     def update(self, driver):
         self.get_node_info(driver)
         self.get_location(driver)
+        self.get_tags(driver)
         self.last_update = datetime.datetime.now()
     
     def get_node_info(self, driver):
@@ -48,6 +50,30 @@ class CragNode():
             float(driver.find_element(By.XPATH, "//meta[@property='place:location:latitude']").get_attribute('content')),
             float(driver.find_element(By.XPATH, "//meta[@property='place:location:longitude']").get_attribute('content'))
         ]
+    
+    def get_tags(self, driver):
+        driver.get(self.url)
+
+        # rowfluid = driver.find_element(By.CLASS_NAME , 'row-fluid')
+        # tags = re.findall('(?:href="/en/article/tagging#)(.*)(?=")', rowfluid.get_attribute('innerHTML'))
+        tag_list = driver.find_elements(By.CLASS_NAME , f'tags')
+        tag_list += driver.find_elements(By.CLASS_NAME , f'icontag')
+        for el in tag_list:
+            try:
+                key = el.get_attribute('text')
+            except:
+                key = None
+            try:
+                val = el.get_attribute('title')
+            except:
+                val = None
+
+            # if key is None:
+            #     key = el.get_attribute('accessible_name')
+
+            print({key:val})
+            if key is not None:
+                self.tags[key] = val
 
     def get_photo_topos(self, driver, phototopo_folder=None):
         if phototopo_folder is None:

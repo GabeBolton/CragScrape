@@ -29,6 +29,7 @@ class CragList():
             self.update(driver)
     
     def update(self, driver):
+        self.get_name(driver)
         self.get_routes(driver)
         self.last_update = datetime.datetime.now()
 
