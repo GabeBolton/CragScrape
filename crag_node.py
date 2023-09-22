@@ -71,7 +71,6 @@ class CragNode():
             # if key is None:
             #     key = el.get_attribute('accessible_name')
 
-            print({key:val})
             if key is not None:
                 self.tags[key] = val
 
@@ -90,6 +89,12 @@ class CragNode():
 
             pt.screenshot(f'{phototopo_folder}/{tid}.png')
 
+    def save_element_screenshot(self, driver: webdriver.Chrome, element, path: str) -> None:
+        original_size = driver.get_window_size()
+        el = driver.find_element(By.CLASS_NAME , 'regions__read')
+        driver.set_window_size(**el.size)
+        el.screenshot(path)  # avoids scrollbar
+        driver.set_window_size(**original_size)
 
     # def get_parent_areas(self, driver):
     #     parent_el_list = driver.find_elements(By.CLASS_NAME , 'crumb.crumb--children')

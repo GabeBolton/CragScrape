@@ -17,13 +17,14 @@ _log.debug('Log initialized')
 # def identify_url_type(url):
 #     if
 
-def main(url):
+def main(url_list):
     # URL of the area/list
 
     # Open the TheCrag.com website in a web 
     # CragScrape.load('./default-scrape/scrape.json')
     scrape = CragScrape()
-    scrape.scrape([url])
+    scrape.scrape(url_list)
+    # scrape.outputs[gpx_export] = [{'filename': cl.name+'.gpx', 'crag_object_list': } for ]
     # driver = create_authenticated_session()
 
     # # r = CragRoute('https://www.thecrag.com/en/climbing/chile/route/1203163971', driver)
@@ -32,11 +33,12 @@ def main(url):
     
     
     print(pdf_formatting.get_route_list_df(scrape.get_routes()))
-    gpx_export([scrape.get_routes()])
+    for cl in [obj for obj in scrape.objs.values() if isinstance(obj, CragList)]:
+       gpx_export(filename=scrape.folder+cl.name+'.gpx', crag_object_list=scrape.get_routes(cl.route_url_list))
 
 
-# main("https://www.thecrag.com/en/list/8144130849")
-main("https://www.thecrag.com/en/list/8060745972")
+main(["https://www.thecrag.com/en/list/8144130849"]) # Trad Goals
+# main(["https://www.thecrag.com/en/list/8060745972"])# Test
 
 """
 <div class="area" data-nid="323218395">

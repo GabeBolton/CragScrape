@@ -27,7 +27,7 @@ class CragDriver(webdriver.Chrome):
             time.sleep(self.rate_limit)
         return super().get(url)
 
-def create_authenticated_session(sesh_dir=None, save_sesh=False, rate_limit=0, no_double_get=True) -> CragDriver:
+def create_authenticated_session(sesh_dir=None, save_sesh=False, rate_limit=0, no_double_get=True, dpi=1.0) -> CragDriver:
     # not implemented
     if sesh_dir is None:
         sesh_dir = f'C:\\Users\\{getpass.getuser()}\\AppData\\Local\\Google\\Chrome\\User Data\\CragScrape'
@@ -35,6 +35,10 @@ def create_authenticated_session(sesh_dir=None, save_sesh=False, rate_limit=0, n
     if save_sesh or os.path.exists(sesh_dir):
         options_ = webdriver.ChromeOptions()
         options_.add_argument(f"user-data-dir={sesh_dir}")
+        options_.add_argument(f"--force-device-scale-factor={dpi}")
+        options_.add_argument("window-size=1980,960")
+        options_.add_argument("headless")
+        options_.add_argument("screenshot")
         driver = CragDriver(rate_limit=rate_limit, no_double_get=no_double_get, options=options_)
     else:
         driver = CragDriver()

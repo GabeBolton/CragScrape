@@ -138,7 +138,15 @@ class CragScrape():
 
 
 
-    def get_routes(self):
+    def get_routes(self, parent_urls=None):
+        if parent_urls is not None:
+            url_list=parent_urls
+            for purl in parent_urls:
+                if isinstance(get_url_class(purl), CragList):
+                    parent_urls += self.objs[purl].route_url_list
+
+            return [obj for url, obj in self.objs.items() if isinstance(obj, CragRoute) and url in url_list]
+
         return [obj for obj in self.objs.values() if isinstance(obj, CragRoute)]
     
 
