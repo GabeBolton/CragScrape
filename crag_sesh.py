@@ -38,7 +38,7 @@ def create_authenticated_session(sesh_dir=None, save_sesh=False, rate_limit=0, n
         options_.add_argument(f"--force-device-scale-factor={dpi}")
         options_.add_argument("window-size=1980,960")
         options_.add_argument("headless")
-        options_.add_argument("screenshot")
+        # options_.add_argument("screenshot")
         driver = CragDriver(rate_limit=rate_limit, no_double_get=no_double_get, options=options_)
     else:
         driver = CragDriver()

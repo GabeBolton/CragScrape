@@ -31,6 +31,7 @@ class CragNode():
         self.get_node_info(driver)
         self.get_location(driver)
         self.get_tags(driver)
+        self.get_parent_areas(driver)
         self.last_update = datetime.datetime.now()
     
     def get_node_info(self, driver):
@@ -96,15 +97,18 @@ class CragNode():
         el.screenshot(path)  # avoids scrollbar
         driver.set_window_size(**original_size)
 
-    # def get_parent_areas(self, driver):
-    #     parent_el_list = driver.find_elements(By.CLASS_NAME , 'crumb.crumb--children')
-    #     parent_el_list = parent_el_list.reverse()
-    #     self.parents = []
-    #     for parent in parent_el_list:
-    #         pdict = {
-    #             'name': 
-    #         }
-    #         self.parents
+    def get_parent_areas(self, driver):
+        parent_el_list = driver.find_elements(By.CLASS_NAME , 'crumb__a')
+        parent_el_list.reverse()
+        self.parents = []
+        for parent in parent_el_list:
+            pdict = {}
+            pdict['url'] = parent.get_attribute('href')
+            if pdict['url'] == 'https://www.thecrag.com/en/climbing/world':
+                pdict['name'] = 'World'
+            else:
+                pdict['name'] = parent.find_element(By.CLASS_NAME, 'crumb__long').text
+            self.parents.append(pdict)
 
 class CragRoute(CragNode):
     def __init__(self, url=None, driver=None) -> None:

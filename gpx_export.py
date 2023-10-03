@@ -42,7 +42,7 @@ def route_to_gpx(gpx: gpxpy.gpx.GPX, cr: CragRoute):
         description='\n'.join([
             f'Grade: {cr.route_info["Grade"]}, Quality: {cr.route_info["Quality"]}',
             cr.route_info['Description'],
-            # get 2 levels of parents
+            ', '.join([d['name'] for d in cr.parents[:5]])
         ]),
         symbol='Climbing'
     ))
